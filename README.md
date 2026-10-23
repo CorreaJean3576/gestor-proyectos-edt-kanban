@@ -9,8 +9,8 @@ ReactPy (interfaz) · FastAPI (integra y sirve la app, **sin API REST propia**) 
 
 ## Instalación y ejecución
 ```bash
-git clone <URL-DEL-REPOSITORIO>
-cd <carpeta-del-repositorio>
+git clone https://github.com/CorreaJean3576/gestor-proyectos-edt-kanban.git
+cd gestor-proyectos-edt-kanban
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
