@@ -57,4 +57,14 @@ a mensajes. El core no importa ReactPy, FastAPI ni `sqlite3`. El contrato entre 
 _(archivo/función de EDT, validaciones, inmutabilidad, ausencia de valor, pruebas del núcleo)_
 
 ### Mike
-_(archivo/función de pattern matching, HOF, lambdas, closure, transiciones, filtros, pruebas)_
+| Concepto | Archivo y función |
+|---|---|
+| Reglas de transición | `app/core/kanban.py::TRANSICIONES`, `siguientes_estados`, `cambiar_estado` (devuelve `Ok`/`Err(ErrorTransicion)`) |
+| Pattern matching | `app/core/kanban.py::aplicar_comando` (`match/case` sobre `CambiarEstado` y `CambiarPrioridad`) |
+| Funciones de orden superior | `app/core/kanban.py::combinar` (recibe criterios y devuelve otro criterio), `filtrar_tareas` |
+| Lambdas | `ordenar_tareas` (clave de orden) y `por_*`; se usa función con nombre cuando hay reglas (`cambiar_estado`, `aplicar_comando`) |
+| Closures | `app/core/kanban.py::por_estado`, `por_responsable`, `por_prioridad` (capturan un criterio inmutable) |
+| Ausencia de valor | `app/core/kanban.py::buscar_tarea` (devuelve `None` si no existe) y `filtrar_tareas` (`None` = sin filtro) |
+| Inmutabilidad | `cambiar_estado` y `aplicar_comando` usan `dataclasses.replace`: la tarea original no cambia |
+| Consultas del avance | `ordenar_tareas`, `pendientes_por_integrante` |
+| Pruebas | `tests/unit/test_kanban.py` |
