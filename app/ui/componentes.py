@@ -6,7 +6,8 @@ las reglas del dominio viven en core/. El estado visual (campos, aviso) es local
 from reactpy import component, html, use_state
 
 from app.domain.errores import Err, Ok
-from app.core.kanban import filtrar_tareas, siguientes_estados
+from app.core.kanban import (filtrar_tareas, ordenar_tareas, pendientes_por_integrante,
+                             siguientes_estados)
 from app.domain.modelos import ESTADOS, PRIORIDADES
 from app import servicio
 from app.adapters import sqlite as db
@@ -109,10 +110,13 @@ def crear_componente(con):
             if isinstance(r, Ok):
                 set_id(""); set_nombre("")
 
+        pendientes = pendientes_por_integrante(tablero["tareas"], tablero["integrantes"])
+
         return html.section(
             {"style": {"minWidth": "260px"}},
             html.h2("Integrantes"),
-            html.ul([html.li({"key": m.id}, f"{m.nombre} ({m.id})") for m in tablero["integrantes"]])
+            html.ul([html.li({"key": m.id}, f"{m.nombre} ({m.id}) — {pendientes[m.id]} pendientes")
+                     for m in tablero["integrantes"]])
             if tablero["integrantes"] else html.p("Aún no hay integrantes."),
             _campo("Id", id_, set_id), _campo("Nombre", nombre, set_nombre),
             html.button({"on_click": agregar}, "Agregar integrante"),
@@ -178,12 +182,12 @@ def crear_componente(con):
         entregables = {e.id: e.nombre for e in tablero["entregables"]}
 
         # La regla de filtrado es del core (función pura); aquí solo se pasan los criterios.
-        visibles = filtrar_tareas(
+        visibles = ordenar_tareas(filtrar_tareas(
             tablero["tareas"],
             estado=f_estado or None,
             responsable_id=f_resp or None,
             prioridad=f_prio or None,
-        )
+        ))
 
         def limpiar(_):
             set_f_estado(""); set_f_resp(""); set_f_prio("")
