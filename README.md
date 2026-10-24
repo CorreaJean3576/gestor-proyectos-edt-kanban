@@ -54,7 +54,16 @@ a mensajes. El core no importa ReactPy, FastAPI ni `sqlite3`. El contrato entre 
 | Pruebas | `tests/integration/test_sqlite.py`, `test_decoradores.py`, `test_servicio.py` |
 
 ### Tamara
-_(archivo/función de EDT, validaciones, inmutabilidad, ausencia de valor, pruebas del núcleo)_
+| Concepto | Archivo y función |
+|---|---|
+| Validaciones | `app/core/edt.py::validar_texto` (texto vacío y longitud máxima), `_validar_id_y_nombre` |
+| EDT: entregables, tareas y responsables | `app/core/edt.py::crear_integrante`, `crear_entregable`, `crear_tarea`, `asignar_responsable` |
+| Pureza | Todo `app/core/edt.py`: mismo resultado con los mismos datos, sin leer ni escribir nada externo. Los ids los recibe la función, porque generarlos sería un efecto de la shell (`app/servicio.py`) |
+| Inmutabilidad | `asignar_responsable` usa `dataclasses.replace` y devuelve una tarea nueva; las funciones `crear_*` no modifican las listas recibidas; los tipos son `frozen=True` en `app/domain/modelos.py` |
+| Ausencia de valor | `app/core/opcion.py` (`Some`, `Nothing`) y `app/core/edt.py::buscar_por_id`: una búsqueda sin resultado devuelve `Nothing()` |
+| Manejo funcional de errores | `Ok`/`Err` con `ErrorValidacion`, `ErrorDuplicado` y `ErrorNoEncontrado` (`app/domain/errores.py`); `match/case` sobre el resultado en `crear_integrante`, `crear_entregable` y `crear_tarea` |
+| Del cómo al qué | `buscar_por_id` (`next` con expresión generadora) y `_nombre_repetido` (`any`) |
+| Pruebas | `tests/unit/test_edt.py` (32 pruebas: casos normales, datos inválidos, límites, inmutabilidad y pureza) |
 
 ### Mike
 | Concepto | Archivo y función |
